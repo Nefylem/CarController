@@ -53,7 +53,8 @@ public class AxleData
     {
         for (int i = 0; i < wheels.Length; ++i)
         {
-            if (steer) wheels[i].wheelCollider.steerAngle = CalculateAckermannSteering(steering, i);
+            //if (steer) wheels[i].wheelCollider.steerAngle = CalculateAckermannSteering(steeringInput, i);     //This needs fine tuning before use
+            if (steer) wheels[i].wheelCollider.steerAngle = steering;
             if (drive) wheels[i].wheelCollider.motorTorque = torque;
             if (brakes) wheels[i].wheelCollider.brakeTorque = brakeTorque;
         }
@@ -61,13 +62,23 @@ public class AxleData
 
     private float CalculateAckermannSteering(float input, int wheelIndex)
     {
-        var angleLeft = 0;
-        var angleRight = 0;
+        var angleLeft = 0f;
+        var angleRight = 0f;
 
-        if (input > 0)
+        if (input > 0f)
         {
-            angleLeft = pos
+            angleLeft = positiveTurnAngle * input;
+            angleRight = negativeTurnAngle * input;
         }
+        else if (input < 0f)
+        {
+            angleLeft = negativeTurnAngle * input;
+            angleRight = positiveTurnAngle * input;
+        }
+
+        if (wheelIndex == leftWheelIndex) return angleLeft;
+
+        return angleRight;
     }
 
     internal void UpdateGrip(bool handbrake, float steering)
