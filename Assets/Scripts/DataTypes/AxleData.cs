@@ -159,7 +159,7 @@ public class AxleData
             wheels[i].wheelCollider.forwardFriction = forwardFriction;
         }
 
-        rb.AddForce(home.transform.forward * (home.speedKph / 400f) * 40000f);
+        rb.AddForce(home.transform.forward * (home.speedKph / 400f) * -8000f);
     }
 
     void AdjustDrift(RollbarData checkWheel, float steering)
@@ -183,7 +183,7 @@ public class AxleData
         var isGrounded = wheels[w].wheelCollider.GetGroundHit(out WheelHit hit);
         if (!isGrounded) return new RollbarData();
 
-        var skidMin = 0.95f;
+        var skidMin = 0.5f;
         return new RollbarData()
         {
             isGrounded = true,

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
+    public Transform centerOfMass;
     [SerializeField] public AxleData[] axles;
     [Range(0f, 1f)] public float steerHelper = 0.5f;
     public float torque = 200f;
@@ -34,6 +35,7 @@ public class CarController : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        rb.centerOfMass = centerOfMass.transform.localPosition;
         SetupVehicle();
     }
 
@@ -54,8 +56,8 @@ public class CarController : MonoBehaviour
         var steerAngle = maxSteerAngle;
         var handbrake = Input.GetKey(KeyCode.Space);
 
-        if (speedKph > 30)
-            steerAngle = Mathf.Lerp(minSteerAngle, maxSteerAngle, 1f - ((speedKph - 40f) / 40f));
+        if (speedKph > 50)
+            steerAngle = Mathf.Lerp(minSteerAngle, maxSteerAngle, 1f - ((speedKph - 50f) / 50f));
 
         var steering = 0f;
         var setSteer = 0f;
@@ -74,8 +76,6 @@ public class CarController : MonoBehaviour
             axles[i].UpdateGrip(handbrake, setSteer);
 
         rb.AddForce(rb.velocity.magnitude * downForceValue * -Vector3.up);
-        if (Mathf.Abs(setSteer) > 0)
-            rb.AddForceAtPosition(rb.velocity.magnitude * turningDownForceValue * -Vector3.up, transform.position + transform.right * setSteer);
 
         speedKph = rb.velocity.magnitude * 3.6f;
         speedMph = rb.velocity.magnitude * 2.237f;
