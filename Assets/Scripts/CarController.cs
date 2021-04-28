@@ -9,6 +9,7 @@ public class CarController : MonoBehaviour
     [SerializeField] public AxleData[] axles;
     [Range(0f, 1f)] public float steerHelper = 0.5f;
     public float torque = 200f;
+    public float reverseTorque = 250f;
     public float brakeTorque = 500f;
     public float minSteerAngle = 10f;
     public float maxSteerAngle = 30f;
@@ -16,6 +17,7 @@ public class CarController : MonoBehaviour
     public float downForceValue = 25f;
     public float turningDownForceValue = 100f;
     public float maxSpeed;
+    public float maxReverseSpeed = -20f;
     public Transform skidTrail;
     public Text speed;
     public Text steerSetAngle;
@@ -52,7 +54,8 @@ public class CarController : MonoBehaviour
     {
         //Down force
         var setTorque = Input.GetKey(KeyCode.W) ? torque : 0f;
-        var setBrakeTorque = Input.GetKey(KeyCode.S) ? brakeTorque : 0;
+
+        //var setBrakeTorque = Input.GetKey(KeyCode.S) ? brakeTorque : 0;
         var steerAngle = maxSteerAngle;
         var handbrake = Input.GetKey(KeyCode.Space);
 
@@ -63,6 +66,17 @@ public class CarController : MonoBehaviour
         var setSteer = 0f;
         if (Input.GetKey(KeyCode.A)) { steering = steerAngle * -1f; setSteer = -1; }
         if (Input.GetKey(KeyCode.D)) { steering = steerAngle * 1f; setSteer = 1; }
+
+        var setBrakeTorque = 0f;
+        if (Input.GetKey(KeyCode.S))
+        {
+            if (speedKph > 1f) setBrakeTorque = brakeTorque;
+            else
+            {
+                setTorque = reverseTorque * -1f;
+                steering *= -1f;
+            }
+        }
 
         for (int i = 0; i < axles.Length; ++i)
             axles[i].UpdateWheels();
@@ -79,11 +93,18 @@ public class CarController : MonoBehaviour
 
         speedKph = rb.velocity.magnitude * 3.6f;
         speedMph = rb.velocity.magnitude * 2.237f;
+        var dot = Vector3.Dot(transform.forward, rb.velocity);
+        if (dot < 0)
+        {
+            speedKph *= -1f;
+            speedMph *= -1f;
+        }
 
         speed.text = $"{Mathf.RoundToInt(speedKph)}";
 
         if (Mathf.Abs(setTorque) <= 0f) rb.velocity *= 0.998f;
-        if (speedKph > maxSpeed) rb.velocity *= 0.99f;
+        if (speedKph > maxSpeed && dot > 0) rb.velocity *= 0.99f;
+        if (speedKph < maxReverseSpeed && dot < 0) rb.velocity *= 0.99f;
     }
 
     void CheckSteeringAngle()

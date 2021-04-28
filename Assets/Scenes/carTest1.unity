@@ -461,7 +461,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.5
+    m_Stiffness: 0.75
   m_Enabled: 1
 --- !u!1 &506341404
 GameObject:
@@ -522,7 +522,7 @@ WheelCollider:
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.5
+    m_Stiffness: 0.75
   m_Enabled: 1
 --- !u!1 &699225569
 GameObject:
@@ -1112,6 +1112,7 @@ MonoBehaviour:
     antiRollBar: 1
   steerHelper: 0.5
   torque: 1250
+  reverseTorque: 500
   brakeTorque: 750
   minSteerAngle: 12
   maxSteerAngle: 30
@@ -1119,6 +1120,7 @@ MonoBehaviour:
   downForceValue: 30
   turningDownForceValue: 500
   maxSpeed: 125
+  maxReverseSpeed: -10
   skidTrail: {fileID: 3646732418545442934, guid: b1c7cc67efdf1914abc0ae50a2da5472,
     type: 3}
   speed: {fileID: 699225571}
